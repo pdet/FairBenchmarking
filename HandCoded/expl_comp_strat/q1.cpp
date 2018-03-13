@@ -41,7 +41,7 @@ void run(const lineitem& li, const std::string& name, Args&&... args)
 		const auto time = get_cycles() - start;
 		clock_gettime(CLOCK_MONOTONIC, &ts_end);
 		double million = 1000000.0;
-		int64_t millisec = (ts_end.tv_sec - ts_start.tv_sec) * 1000.0 + ((ts_end.tv_nsec - ts_start.tv_nsec) / million);
+		double millisec = (ts_end.tv_sec - ts_start.tv_sec) * 1000.0 + ((ts_end.tv_nsec - ts_start.tv_nsec) / million);
 
 		if (true || rep != 0) { /* Throw cold run away */
 			total_time += time;
@@ -52,12 +52,8 @@ void run(const lineitem& li, const std::string& name, Args&&... args)
 	const double hot_reps = REP_COUNT;
 	const double total_tuples = hot_reps * n;
 	
-	printf("%d \t %-40s \t %.1f       \t %.1f       \t %.1f       \t %.1f       \t %.1f\n",
-		runIdCounter, name.c_str(), (double)total_time / total_tuples,
-		(double)total_millis / hot_reps,
-		(double)fun.sum_aggr_time / total_tuples,
-		(double)fun.sum_magic_time / total_tuples,
-		(double)(total_time - 0 - fun.sum_aggr_time - fun.sum_magic_time) / total_tuples);
+	printf("%f\n",
+		(double)total_millis / 1000.0);
 
 	runIdCounter++;
 	fun.Profile(total_tuples);
@@ -131,10 +127,10 @@ int main() {
 	li.FromFile("lineitem.tbl");
 
 	/* start processing */
-
+#if 0
 	printf("ID \t %-40s \t timetuple \t millisec \t aggrtuple \t pshuffletuple \t remainingtuple\n",
 		"Configuration");
-
+#endif
 //	run<KernelWeld>(li, "$\\text{Weld}$");
 
 #if 0
@@ -157,6 +153,7 @@ int main() {
 	for (size_t i=0; i<10; i++)
         run<KernelNaiveCompact>(li, "$\\text{HyPer Compact NoOverflow}$");
 
+#if 0
 	for (size_t i=0; i<10; i++)
 	run<KernelHyPer<true>>(li, "$\\text{HyPer Full}$");
 	for (size_t i=0; i<10; i++)
@@ -169,6 +166,7 @@ int main() {
 	run<KernelHyPerCompact<true>>(li, "$\\text{HyPer Compact}$");
 	for (size_t i=0; i<10; i++)
 	run<KernelHyPerCompact<false>>(li, "$\\text{HyPer Compact OverflowBranch}$");
+#endif
 
 #ifdef __AVX512F__
 	run<AVX512<false, false, true>>(li, "$\\text{Handwritten AVX-512}$");
