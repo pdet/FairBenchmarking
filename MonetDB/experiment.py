@@ -23,7 +23,7 @@ for monetdb_install_dir in monetdb_install_dirs:
 	monetdb_install_dir = os.path.join(tempdir,monetdb_install_dir)
 	client = os.path.join(monetdb_install_dir, 'bin', 'mclient')
 	server = os.path.join(monetdb_install_dir, 'bin', 'mserver5')
-	proc = subprocess.Popen([server, '--daemon=no'])
+	proc = subprocess.Popen([server, '--daemon=no','--set', 'gdk_num_threads=1'])
 	while os.system('%s -s "SELECT 1"' % client) != 0:
 		time.sleep(1)
 	benchmark_query(client,RESULTCSV)
