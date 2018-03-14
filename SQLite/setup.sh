@@ -37,7 +37,7 @@ for table in $TABLES; do
         echo "Importing table '$table'..." >&2
         data_file="$table.tbl"
         if [ ! -e "$data_file" ]; then
-                echo "'$data_file' does’nt exist. Skipping..." >&2
+                echo "'$data_file' does not exist. Skipping..." >&2
                 RET_CODE=1
                 continue
         fi
@@ -58,31 +58,3 @@ for table in $TABLES; do
                 RET_CODE=1
         fi
 done
-
-
-REPS="1 2 3 4 5 6 7 8 9 10"
-
-for rep in $REPS; do
-        START=$(date +%s.%N)
-        cat ../1.sql | ../sqlite-autoconf-3220000/sqlite3 "$db" > /dev/null
-        END=$(date +%s.%N)
-        DIFF=$(echo "$END - $START" | bc)
-        echo $DIFF
-done
-
-for rep in $REPS; do
-	START=$(date +%s.%N)
-        cat ../9.sql | ../sqlite-autoconf-3220000/sqlite3 "$db" > /dev/null
-	END=$(date +%s.%N)
-	DIFF=$(echo "$END - $START" | bc)
-	echo $DIFF
-done
-
-for rep in $REPS; do
-        START=$(date +%s.%N)
-        cat ../9x.sql | ../sqlite-autoconf-3220000/sqlite3 "$db" > /dev/null
-        END=$(date +%s.%N)
-        DIFF=$(echo "$END - $START" | bc)
-        echo $DIFF
-done
-
