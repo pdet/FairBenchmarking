@@ -1,9 +1,11 @@
 import subprocess
-
-monetdb_install_dirs = [''] 
+import os
+from configuration import *
+import time
 
 print("Loading Data...")
 for monetdb_install_dir in monetdb_install_dirs:
+	monetdb_install_dir = os.path.join(tempdir,monetdb_install_dir)
 	client = os.path.join(monetdb_install_dir, 'bin', 'mclient')
 	server = os.path.join(monetdb_install_dir, 'bin', 'mserver5')
 	if os.system('ls $HOME/.monetdb') != 0:

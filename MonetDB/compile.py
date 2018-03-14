@@ -16,16 +16,29 @@ for branch in branches:
 		exit()
 
 	monetdb_install_dir = os.path.join(tempdir, branch_name+'Install')
-	os.system('mkdir %s', monetdb_install_dir)
+	os.system('mkdir %s'% monetdb_install_dir)
+
+	if branch_name == 'MonetDB-11.27.13':
+		if os.system('./configure %s --prefix="%s"' % (debug_build_parameters, monetdb_install_dir+'debug')) != 0:
+			print("Failed to configure MonetDB")
+			exit()
+		if os.system('make clean') != 0:
+			print("Failed to make MonetDB")
+			exit()
+		if os.system('make -j4') != 0:
+			print("Failed to make MonetDB")
+			exit()
+		if os.system('make install') != 0:
+			print("Failed to make install MonetDB")
+			exit()
+
 	if os.system('./configure %s --prefix="%s"' % (parameters, monetdb_install_dir)) != 0:
 		print("Failed to configure MonetDB")
 		exit()
+	if os.system('make -j4') != 0:
+		print("Failed to make MonetDB")
+		exit()
 
-	if branch_name == 'default':
-		if os.system('./configure %s --prefix="%s"' % (debug_build_parameters, monetdb_install_dir+'debugInstall')) != 0:
-			print("Failed to configure MonetDB")
-			exit()
-
-	if os.system('make install -j4') != 0:
+	if os.system('make install') != 0:
 		print("Failed to make install MonetDB")
 		exit()
