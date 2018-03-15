@@ -2,6 +2,7 @@
 #include <cassert>
 
 AggrHashTable aggrs0[MAX_GROUPS] ALIGN;
+AggrHashTableAll64 aggrs1[MAX_GROUPS] ALIGN;
 
 int64_t aggr_dsm0_sum_quantity[MAX_GROUPS] ALIGN;
 int64_t aggr_dsm0_count[MAX_GROUPS] ALIGN;
@@ -26,6 +27,7 @@ extern "C" void
 clear_tables()
 {
 	init_table(0);
+	init_table(1);
 
 	clear(aggr_dsm0_sum_quantity);
 	clear(aggr_dsm0_count);
@@ -102,7 +104,7 @@ IKernel::~IKernel()
 	if (m_clean) {
 		for (auto p : m_alloced) {
 			free(p);
-		}	
+		}
 	}
 }
 
@@ -115,7 +117,7 @@ print_arr(long long int* a, size_t* indices)
 				printf(", ");
 			}
 			printf("%ld", a[indices[i]]);
-			
+
 		}
 	} else {
 		for (size_t i=0; i<8; i++) {
@@ -123,7 +125,7 @@ print_arr(long long int* a, size_t* indices)
 				printf(", ");
 			}
 			printf("%ld", a[i]);
-			
+
 		}
 	}
 	printf("\n");
@@ -140,7 +142,7 @@ print_reg(__m512i r)
 
 	test.a = r;
 
-	print_arr((long long int*)&test.b);	
+	print_arr((long long int*)&test.b);
 }
 
 void
@@ -158,7 +160,7 @@ print_reg16(__m512i r)
 			printf(", ");
 		}
 		printf("%d", test.b[i]);
-		
+
 	}
 	printf("\n");
 }

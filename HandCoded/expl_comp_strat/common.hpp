@@ -20,7 +20,7 @@
 
 
 // #define RESTRICT
-#define RESTRICT __restrict__ 
+#define RESTRICT __restrict__
 typedef int64_t sel_t;
 
 typedef __int128 int128_t;
@@ -61,7 +61,7 @@ mul_64_64_64_scalar(int64_t a, int64_t b)
     uint64_t a_hi = (a >> 32);
     uint64_t b_lo = b & 0xFFFFFFFF;
     uint64_t b_hi = (b >> 32);
-    
+
     uint64_t x = a_lo * b_lo;
     uint64_t y = (a_lo * b_hi) << 32;
     uint64_t z = (a_hi * b_lo) << 32;
@@ -78,14 +78,14 @@ mul_64_64_64_avx512(__m512i a, __m512i b)
     // 64-bit input -> get low 32-bits and multiply into 64-bit result
     // i.e. a_lo * b_lo
     auto x = _mm512_mul_epu32(a, b);
-    
+
     // shift hi parts into low parts
     auto a_hi = _mm512_srai_epi64(a, 32);
     auto b_hi = _mm512_srai_epi64(b, 32);
 
     auto y = _mm512_slli_epi64(_mm512_mul_epu32(a, b_hi), 32); // a_lo * b_hi
     auto z = _mm512_slli_epi64(_mm512_mul_epu32(a_hi, b), 32); // a_hi * b_lo
-    
+
     return _mm512_add_epi64(_mm512_add_epi64(x, y), z);
 #endif
 }
@@ -155,6 +155,15 @@ struct AggrHashTable {
 	int64_t sum_disc;
 	int128_t sum_disc_price;
 	int128_t sum_charge;
+};
+
+struct AggrHashTableAll64 {
+	int32_t count;
+	int32_t sum_disc;
+	int64_t sum_quantity;
+	int64_t sum_base_price;
+	int64_t sum_disc_price;
+	int64_t sum_charge;
 };
 
 #define kernel_prologue() \
@@ -256,6 +265,7 @@ extern "C" __attribute__((noinline)) void handle_overflow();
 extern "C" void clear_tables();
 
 extern AggrHashTable aggrs0[];
+extern AggrHashTableAll64 aggrs1[];
 
 extern int64_t aggr_dsm0_sum_quantity[];
 extern int64_t aggr_dsm0_count[];
@@ -397,11 +407,11 @@ popcount_up_to_16_epi32(__m512i a, __m512i pop_table)
 inline static __m512i
 popcount_up_to_16_bitw_epi32(__m512i a)
 {
-	const auto t1 = _mm512_and_epi32(_mm512_srli_epi32(a, 1), _mm512_set1_epi32(0x55555555));	
+	const auto t1 = _mm512_and_epi32(_mm512_srli_epi32(a, 1), _mm512_set1_epi32(0x55555555));
 	a = _mm512_sub_epi32(a, t1);
 
 	const auto t2 = _mm512_and_epi32(a, _mm512_set1_epi32(0x33333333));
-	const auto t3 = _mm512_and_epi32(_mm512_srli_epi32(a, 2), _mm512_set1_epi32(0x33333333));	
+	const auto t3 = _mm512_and_epi32(_mm512_srli_epi32(a, 2), _mm512_set1_epi32(0x33333333));
 	a = _mm512_add_epi32(t2, t3);
 
 	a = _mm512_and_epi32(_mm512_add_epi32(a, _mm512_srli_epi32(a, 4)), _mm512_set1_epi32(0x0F0F0F0F));
