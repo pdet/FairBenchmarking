@@ -52,7 +52,7 @@ aggr <- function(f, sys) {
 	sl2 <- sl
 	sl2$grp <- 3
 
-	mf <- aggr("mysql-floats-sf1-q1.tsv", "MySQL*")
+	mf <- aggr("mysql-floats-sf1-q1.tsv", "MySQL")
 	mf$grp <- 3
 
 	df <- rbind(my, pg, pg2, sl, sl2, mf)
