@@ -35,7 +35,7 @@ aggr <- function(f, sys) {
 }
 
 	
-my <- aggr("mysql-sf1-q1.tsv", "MySQL")
+my <- aggr("mysql-sf1-q1.tsv", "MariaDB")
 my$grp <- 1
 
 pg <- aggr("postgres.optimal.sf1-q1.tsv", "Postgres")
@@ -50,7 +50,7 @@ sl$grp <- 2
 sl2 <- sl
 sl2$grp <- 3
 
-mf <- aggr("mysql-floats-sf1-q1.tsv", "MySQL*")
+mf <- aggr("mysql-floats-sf1-q1.tsv", "MariaDB*")
 mf$grp <- 3
 
 df <- rbind(my, pg, pg2, sl, sl2, mf)
