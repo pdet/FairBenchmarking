@@ -11,6 +11,7 @@ RESULTCSV = 'postgres.result.csv'
 CURRENTDIR = os.getcwd()
 PGDATA=os.path.join(CURRENTDIR, 'pgdata')
 INSTALLDIR = os.path.join(CURRENTDIR, 'postgresql-build-${VERSION}'.replace('${VERSION}', POSTGRES_VERSION))
+CONFIGURATION_PARAMETERS = ''#'--with-blocksize=1 --with-segsize=1'
 
 def install_postgres():
 	os.system('mkdir -p ${BUILD_DIR}'.replace("${BUILD_DIR}", INSTALLDIR))
@@ -21,7 +22,7 @@ def install_postgres():
 		raise Exception("Failed to unzip")
 	#os.system('rm postgresql-${VERSION}.tar.gz'.replace("${VERSION}", POSTGRES_VERSION))
 	os.chdir('postgresql-${VERSION}'.replace("${VERSION}", POSTGRES_VERSION))
-	if os.system('./configure --prefix="${BUILD_DIR}" --disable-debug --disable-cassert CFLAGS="-O3"'.replace("${BUILD_DIR}", INSTALLDIR)):
+	if os.system('./configure --prefix="${BUILD_DIR}" ${EXTRA_CONFIGURATION} --disable-debug --disable-cassert CFLAGS="-O3"'.replace("${BUILD_DIR}", INSTALLDIR).replace("${EXTRA_CONFIGURATION}", CONFIGURATION_PARAMETERS)):
 		raise Exception("Failed to configure")
 	if os.system('make'):
 		raise Exception("Failed to make")
@@ -122,7 +123,7 @@ def set_configuration(dict):
 
 
 def print_usage():
-	print("Usage: python postgres.py [install|generate [sf]|load|benchmark [configuration]]")
+	print("Usage: python postgres.py [install|generate [sf]|load|benchmark [configuration] [query]]")
 	exit(1)
 
 if len(sys.argv) <= 1:
@@ -143,13 +144,16 @@ optimal_configuration = {
 	'constraint_exclusion': 'on',
 	'wal_buffers': '32MB',
 	'max_connections': '10',
-	'checkpoint_completion_target': '0.9'
+	'checkpoint_completion_target': '0.9',
+	'temp_buffers': '1GB'
 }
 default_configuration = {
 	'shared_buffers': '128kB',
 	'effective_cache_size': '1MB',
 	'maintenance_work_mem': '1MB',
-	'work_mem': '64kB'
+	'work_mem': '64kB',
+	'max_stack_depth': '100kB',
+	'temp_buffers': '800kB'
 }
 
 
@@ -186,7 +190,7 @@ elif sys.argv[1] == 'benchmark':
 		set_configuration(default_configuration)
 	stop_database()
 	start_database()
-	benchmark_query('postgres/q01.sql')
+	benchmark_query('postgres/q01.sql' if len(sys.argv) <= 3 else sys.argv[3])
 	stop_database()
 	print("Finished running Q1 benchmark")
 elif sys.argv[1] == 'startdb':
