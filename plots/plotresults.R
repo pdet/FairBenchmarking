@@ -24,7 +24,7 @@ abplot <- function(fa, fb, la, lb, out, lims=NULL) {
 abplot("monetdb.default.debug.sf1-q1.tsv", "monetdb.default.optimal.sf1-q1.tsv", "MonetDB", "MonetDB*", "compilation-flags.pdf", c(0, 1.75))
 abplot("monetdb.default.optimal.sf1-q1.tsv", "hand-sf1-q1.tsv", "MonetDB", "'TimDB'", "hand-rolled.pdf", c(0, 1))
 abplot("mysql-sf1-q1.tsv", "postgres.optimal.sf1-q1.tsv", "MariaDB", "Postgres", "postgres-better-mysql.pdf")
-abplot("postgres.default.sf1-q9.tsv", "postgres.optimal.sf1-q9.tsv", "Postgres", "Postgres*", "postgres-config.pdf")
+abplot("postgres.default.sf1-q9.tsv", "postgres.optimal.sf1-q9.tsv", "Postgres", "Postgres*", "postgres-config.pdf", c(0, 0.6))
 abplot("sqlite-sf1-q9-hard-joinorder", "sqlite-sf1-q9-defaullt-joinorder", "SQLite", "SQLite*", "sqlite-plan.pdf")
 
 
